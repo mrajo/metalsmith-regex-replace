@@ -1,0 +1,1 @@
+Blarg should be hidden no matter their surrounding context.

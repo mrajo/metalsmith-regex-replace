@@ -1,0 +1,1 @@
+Ninja should be hidden no matter their surrounding context.

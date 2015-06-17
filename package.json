@@ -1,0 +1,23 @@
+{
+  "name": "metalsmith-grep",
+  "version": "1.0.0",
+  "description": "A Metalsmith plugin for performing text search and replace in source files",
+  "main": "lib/index.js",
+  "author": "Anthony Castle",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.2.0",
+    "js-yaml": "^3.3.1",
+    "rot": "^0.1.0"
+  },
+  "devDependencies": {
+    "assert-dir-equal": "^1.0.1",
+    "buffer-equal": "0.0.1",
+    "is-utf8": "^0.2.0",
+    "metalsmith": "^1.7.0",
+    "mocha": "^2.2.5"
+  },
+  "scripts": {
+    "test": "make test"
+  }
+}
