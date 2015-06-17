@@ -1,6 +1,6 @@
 'use strict';
 
-var yaml = require('../lib/yaml_loader.js');
+var load = require('../src/loader.js');
 
 function config(options) {
     var subs = false;
