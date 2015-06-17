@@ -41,7 +41,7 @@ describe('metalsmith-grep', function () {
                 .build();
         }
 
-        assert.throws(runMetalsmith, Error, '"subs" option required');
+        assert.throws(runMetalsmith, /Invalid arguments/);
         done();
     });
 
