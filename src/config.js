@@ -2,14 +2,14 @@
 
 var load = require('../src/loader.js');
 
-function config(options) {
-    var subs = false;
-    if ('object' == typeof options) subs = options;
-    if ('string' == typeof options && (options.endsWith('.yaml') || options.endsWith('.yml'))) subs = load.yaml(options);
-    if ('string' == typeof options && options.endsWith('.json')) subs = load.json(options);
-    if ('function' == typeof options) subs = options();
-    if (!subs) throw new Error('"subs" option required');
-    return subs;
+function config(params) {
+    var cfg = false;
+    if ('object' == typeof params) cfg = params;
+    if ('string' == typeof params && (params.endsWith('.yaml') || params.endsWith('.yml'))) cfg = load.yaml(params);
+    if ('string' == typeof params && params.endsWith('.json')) cfg = load.json(params);
+    if ('function' == typeof params) cfg = params();
+    if (!cfg) throw new Error('Invalid arguments');
+    return cfg;
 }
 
 module.exports = config;

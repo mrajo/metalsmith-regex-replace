@@ -1,11 +1,11 @@
 'use strict';
 
-var each = require('async').each;
 var config = require('./config.js');
 var grep = require('./grep.js');
+var each = require('async').each;
 
-function plugin(options) {
-    var cfg = config(options);
+function plugin(params) {
+    var cfg = config(params);
     var subs = cfg['subs'];
 
     return function (files, metalsmith, done) {
