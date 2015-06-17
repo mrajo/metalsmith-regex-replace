@@ -85,11 +85,19 @@ describe('metalsmith-grep', function () {
             .build(assertDirsEqual(src, done));
     });
 
-    it('should accept a string containing the path to the yaml file of subs', function (done) {
-        var src = 'test/fixtures/subs-file';
+    it('should accept a string containing the path to a JSON file of subs', function (done) {
+        var src = 'test/fixtures/subs-file-json';
 
         Metalsmith(src)
-            .use(grep('test/fixtures/subs-file/metalsmith-grep.yml'))
+            .use(grep(src + '/subs.json'))
+            .build(assertDirsEqual(src, done));
+    });
+
+    it('should accept a string containing the path to a YAML file of subs', function (done) {
+        var src = 'test/fixtures/subs-file-yaml';
+
+        Metalsmith(src)
+            .use(grep(src + '/subs.yml'))
             .build(assertDirsEqual(src, done));
     });
 

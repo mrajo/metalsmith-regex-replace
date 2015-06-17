@@ -31,7 +31,7 @@ The plugin requires an object with a key called "subs", containing an array of s
 }
 ```
 
-You can pass either an object directly, a path to a YAML file, or a function that returns an object.
+You can pass either an object directly, a path to a JSON or YAML file, or a function that returns an object.
 
 ### Passing an object
 
@@ -51,13 +51,25 @@ Metalsmith(__dirname)
     .build();
 ```
 
-### Passing a YAML file
+### Passing a file
 
-YAML file
+YAML file must end with extension `.yaml` or `.yml`.
 ```yaml
 subs:
   - search: teh
     replace: the
+```
+
+JSON file must end with extension `.json`.
+```json
+{
+    "subs": [
+        {
+            "search": "teh",
+            "replace": "the"
+        }
+    ]
+}
 ```
 
 Javascript
@@ -65,8 +77,14 @@ Javascript
 var Metalsmith = require('metalsmith');
 var grep = require('metalsmith-grep');
 
+// YAML
 Metalsmith(__dirname)
     .use(grep('path/to/subs.yaml'))
+    .build();
+
+// JSON
+Metalsmith(__dirname)
+    .use(grep('path/to/subs.json'))
     .build();
 ```
 
