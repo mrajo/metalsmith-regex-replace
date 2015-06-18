@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "A Metalsmith plugin for performing text search and replace in source files",
   "main": "src/index.js",
-  "author": "Anthony Castle",
+  "repository": "mrajo/metalsmith-grep",
+  "author": {
+    "name": "Anthony Castle",
+    "email": "anthony.c@stle.co"
+  },
   "license": "MIT",
   "dependencies": {
     "async": "^1.2.0",
