@@ -8,7 +8,6 @@ var join = require('path').join;
 var read = require('fs').readFileSync;
 var buffer_equal = require('buffer-equal');
 var utf8 = require('is-utf8');
-var filter = require('../../metalsmith-filter');
 
 function assertDirsEqual(src, done) {
     return function (err) {
@@ -125,7 +124,7 @@ describe('metalsmith-grep', function () {
             var src = 'test/fixtures/preserve-case';
 
             Metalsmith(src)
-                .use(filter('allcaps.txt'))
+                .ignore('!allcaps.txt')
                 .use(grep({
                     subs: [
                         {
@@ -142,7 +141,7 @@ describe('metalsmith-grep', function () {
 
             Metalsmith(src)
                 .clean(false)
-                .use(filter('capitalized.txt'))
+                .ignore('!capitalized.txt')
                 .use(grep({
                     subs: [
                         {
@@ -227,7 +226,7 @@ describe('metalsmith-grep', function () {
             var src = 'test/fixtures/regexp-patterns';
 
             Metalsmith(src)
-                .use(filter('moo.txt'))
+                .ignore('!moo.txt')
                 .use(grep({
                     subs: [
                         {
@@ -248,7 +247,7 @@ describe('metalsmith-grep', function () {
 
             Metalsmith(src)
                 .clean(false)
-                .use(filter('boo.txt'))
+                .ignore('!boo.txt')
                 .use(grep({
                     subs: [
                         {
