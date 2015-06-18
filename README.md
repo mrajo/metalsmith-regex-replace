@@ -8,7 +8,9 @@ censor NSFW text, hide sensitive information, etc.
 
 ## Install
 
-This is not on NPM. For the time being, I use `npm link` to use in projects.
+```
+npm install metalsmith-grep
+```
 
 ## Usage
 
