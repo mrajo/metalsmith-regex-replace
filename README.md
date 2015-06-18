@@ -1,4 +1,4 @@
-# metalsmith-grep
+# metalsmith-grep [![Build Status](https://travis-ci.org/mrajo/metalsmith-grep.svg)](https://travis-ci.org/mrajo/metalsmith-grep)
 
 > A Metalsmith plugin for performing text search and replace in source files
 
