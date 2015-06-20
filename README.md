@@ -14,7 +14,7 @@ npm install metalsmith-grep
 
 ## Usage
 
-The plugin requires an object with a key called "subs", containing an array of substition objects with keys for "search" and "replace".
+The plugin requires an object with a key called "subs", containing an array of substition objects with keys for "search" and "replace". Search terms are case-insensitive.
 
 ### Example
 ```javascript
@@ -111,6 +111,43 @@ function makeSubs() {
 Metalsmith(__dirname)
     .use(grep(makeSubs))
     .build();
+```
+
+## Bypassing grep
+To allow a word to bypass replacement (such as homonyms or other instances of words changing meaning with context), surround it with vertical pipes in your source, like `|word|`. For example:
+
+#### Original source
+```
+There once was a man named Bob who liked to bob for apples.
+```
+
+#### Javascript
+```
+Metalsmith(__dirname)
+    .use(grep({
+        subs: [
+            {
+                search: 'bob',
+                replace: 'Paul'
+            }
+        ]
+    }))
+    .build();
+```
+
+#### Bad output; we don't want to replace the second instance of "bob"
+```
+There once was a man named Paul who liked to Paul for apples.
+```
+
+#### Modified source
+```
+There once was a man named Bob who liked to |bob| for apples.
+```
+
+#### New output
+```
+There once was a man named Paul who liked to bob for apples.
 ```
 
 ## License
