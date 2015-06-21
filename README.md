@@ -14,7 +14,17 @@ npm install metalsmith-grep
 
 ## Usage
 
-The plugin requires an object with a key called "subs", containing an array of substition objects with keys for "search" and "replace". Search terms are case-insensitive.
+The plugin requires an object with a key called `subs`, containing an array of
+substition objects with keys for `search` and `replace`.
+
+### search
+Type: `string` or `RegExp`
+
+### replace
+Type: `string` or `function`
+
+If using a function for `replace` argument, it should have a signature as
+described in `String.prototype.replace` ([MDN reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter)).
 
 ### Example
 ```javascript
@@ -25,15 +35,20 @@ The plugin requires an object with a key called "subs", containing an array of s
       replace: "the replacement text"
     },
     {
-      search: "more text",
+      search: /more text/,
       replace: "another replacement"
+    },
+    {
+      search: new RegExp("another search"),
+      replace: "yet another replacement"
     }
     ...
   ]
 }
 ```
 
-You can pass either an object directly, a path to a JSON or YAML file, or a function that returns an object.
+You can pass either an object directly, a path to a JSON or YAML file, or a
+function that returns an object.
 
 ### Passing an object
 
@@ -113,8 +128,77 @@ Metalsmith(__dirname)
     .build();
 ```
 
+## Substitution options
+
+Options can be supplied in an object at the root of the plugin argument object,
+alongside the `subs` key. These will be global options applied to each search
+and replace pair. Additionally, each match in the `subs` object can be supplied
+an `options` object to override the global options and allow for options on a
+per-match basis.
+
+These options are used when `search` is a string or when `replace`
+is a function. In those situations, the plugin gives you full control over the
+`RegExp` patterns and replacements.
+
+### Example
+```javascript
+{
+  options: {
+    // global options here
+  },
+  subs: [
+    {
+      search: "some text or simple pattern",
+      replace: "the replacement text",
+      options: {
+        // options for just this match here, overriding global options
+      }
+    },
+    ...
+  ]
+}
+```
+
+#### caseSensitive
+Type: `Boolean`
+Default: `false`
+
+Sets the `i` flag for the `RegExp` expression. You can set the `i` flag explicitly
+for each match as usual, this just allows for setting it globally and making
+the subs list look nicer.
+
+#### matchCase
+Type: `Boolean`
+Default: `false`
+
+Changes replacement text to the case of the original match. If original match is
+all caps, the replacement will be all caps. If the original match was capitalized,
+the replacement will be capitalized. If the original match was all lowercase,
+the replacement will be all lowercase. This option is ignored if `caseSensitive`
+is `true`.
+
+#### isolatedWord
+Type: `Boolean`
+Default: `true`
+
+Wraps the search text in RegExp word boundaries (`\b`) automatically. This is just
+a helper to make the replacement strings look cleaner.
+
+#### bypass
+Type: `String` (one character) or `null` or `false`
+Default: `"|"`
+
+When text in source is enclosed between the `bypass` string, it will be ignored
+by the substitution filter. This can be changed if necessary, or set to `null`
+or `false` to disable this behavior. This must be a one-character string. This
+option is always global and can't be overridden per-match, since it wouldn't
+make sense. For more information on bypassing, read on to "Bypassing grep".
+
 ## Bypassing grep
-To allow a word to bypass replacement (such as homonyms or other instances of words changing meaning with context), surround it with vertical pipes in your source, like `|word|`. For example:
+To allow a word to bypass replacement (such as homonyms or other instances of
+words changing meaning with context), surround it with vertical pipes in your
+source, like `|word|`. This wrapper character can be overridden using the
+`bypass` option. For example:
 
 #### Original source
 ```

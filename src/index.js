@@ -6,13 +6,12 @@ var each = require('async').each;
 
 function plugin(params) {
     var cfg = config(params);
-    var subs = cfg['subs'];
 
     return function (files, metalsmith, done) {
         each(
             Object.keys(files),
             function (file, done) {
-                files[file].contents = new Buffer(grep(files[file].contents.toString(), subs));
+                files[file].contents = new Buffer(grep(files[file].contents.toString(), cfg));
                 done();
             },
             done

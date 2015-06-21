@@ -44,79 +44,209 @@ describe('metalsmith-grep', function () {
         done();
     });
 
-    it('should accept an object of subs', function (done) {
-        var src = 'test/fixtures/subs-object';
+    describe('should accept various argument types', function () {
+        it('should accept an object of subs', function (done) {
+            var src = 'test/fixtures/subs-object';
 
-        Metalsmith(src)
-            .use(grep({
-                subs: [
-                    {
-                        search: 'bitch',
-                        replace: 'girl'
-                    },
-                    {
-                        search: 'fuck',
-                        replace: 'mess'
-                    }
-                ]
-            }))
-            .build(assertDirsEqual(src, done));
-    });
-
-    it('should accept a function that returns an object of subs', function (done) {
-        var src = 'test/fixtures/subs-function';
-
-        Metalsmith(src)
-            .use(grep(function () {
-                return {
+            Metalsmith(src)
+                .use(grep({
                     subs: [
                         {
-                            search: 'pussy',
-                            replace: 'women'
+                            search: 'bitch',
+                            replace: 'girl'
                         },
                         {
-                            search: 'niggas',
-                            replace: 'brethren'
+                            search: 'fuck',
+                            replace: 'mess'
                         }
                     ]
-                };
-            }))
-            .build(assertDirsEqual(src, done));
+                }))
+                .build(assertDirsEqual(src, done));
+        });
+
+        it('should accept a function that returns an object of subs', function (done) {
+            var src = 'test/fixtures/subs-function';
+
+            Metalsmith(src)
+                .use(grep(function () {
+                    return {
+                        subs: [
+                            {
+                                search: 'pussy',
+                                replace: 'women'
+                            },
+                            {
+                                search: 'niggas',
+                                replace: 'brethren'
+                            }
+                        ]
+                    };
+                }))
+                .build(assertDirsEqual(src, done));
+        });
+
+        it('should accept a string containing the path to a JSON file of subs', function (done) {
+            var src = 'test/fixtures/subs-file-json';
+
+            Metalsmith(src)
+                .use(grep(src + '/subs.json'))
+                .build(assertDirsEqual(src, done));
+        });
+
+        it('should accept a string containing the path to a YAML file of subs', function (done) {
+            var src = 'test/fixtures/subs-file-yaml';
+
+            Metalsmith(src)
+                .use(grep(src + '/subs.yml'))
+                .build(assertDirsEqual(src, done));
+        });
     });
 
-    it('should accept a string containing the path to a JSON file of subs', function (done) {
-        var src = 'test/fixtures/subs-file-json';
+    describe('should accept various search and replace formats', function () {
+        it('should accept search pattern as string', function (done) {
+            var src = 'test/fixtures/search-string';
 
-        Metalsmith(src)
-            .use(grep(src + '/subs.json'))
-            .build(assertDirsEqual(src, done));
+            Metalsmith(src)
+                .use(grep({
+                    subs: [
+                        {
+                            search: 'teh',
+                            replace: 'the'
+                        }
+                    ]
+                }))
+                .build(assertDirsEqual(src, done));
+        });
+
+        it('should accept search pattern as RegExp literal', function (done) {
+            var src = 'test/fixtures/search-regexp-literal';
+
+            Metalsmith(src)
+                .use(grep({
+                    subs: [
+                        {
+                            search: /\t/g,
+                            replace: '  '
+                        }
+                    ]
+                }))
+                .build(assertDirsEqual(src, done));
+        });
+
+        it('should accept search pattern as RegExp object instance', function (done) {
+            var src = 'test/fixtures/search-regexp';
+
+            Metalsmith(src)
+                .use(grep({
+                    subs: [
+                        {
+                            search: new RegExp('\t', 'g'),
+                            replace: '  '
+                        }
+                    ]
+                }))
+                .build(assertDirsEqual(src, done));
+        });
+
+        it('should accept a function as a replacement', function (done) {
+            var src = 'test/fixtures/replace-function';
+
+            Metalsmith(src)
+                .use(grep({
+                    subs: [
+                        {
+                            search: /([a-z])([A-Z])/g,
+                            replace: function (match, p1, p2) {
+                                return p1 + '_' + p2.toLowerCase();
+                            }
+                        }
+                    ]
+                }))
+                .build(assertDirsEqual(src, done));
+        });
+
+        it('should allow backreferences in sub["replace"]', function (done) {
+            var src = 'test/fixtures/replace-backref';
+
+            Metalsmith(src)
+                .clean(false)
+                .use(grep({
+                    subs: [
+                        {
+                            search: 'ghost',
+                            replace: 'owl'
+                        },
+                        {
+                            search: 'bo(o+)',
+                            replace: 'ho$2'
+                        }
+                    ]
+                }))
+                .build(assertFilesEqual(src, 'boo.txt', done));
+        });
     });
 
-    it('should accept a string containing the path to a YAML file of subs', function (done) {
-        var src = 'test/fixtures/subs-file-yaml';
+    describe('should accept options', function () {
+        it('should have default options', function (done) {
+            var src = 'test/fixtures/options-default';
 
-        Metalsmith(src)
-            .use(grep(src + '/subs.yml'))
-            .build(assertDirsEqual(src, done));
-    });
+            Metalsmith(src)
+                .use(grep({
+                    subs: [
+                        {
+                            search: 'Spot',
+                            replace: 'Rex'
+                        }
+                    ]
+                }))
+                .build(assertDirsEqual(src, done));
+        });
 
-    it('should not substitute if they are enclosed in vertical pipes', function (done) {
-        var src = 'test/fixtures/bypass';
+        it('should accept an object of global options to override defaults', function (done) {
+            var src = 'test/fixtures/options-global';
 
-        Metalsmith(src)
-            .use(grep({
-                subs: [
-                    {
-                        search: 'shit',
-                        replace: 'poop'
+            Metalsmith(src)
+                .use(grep({
+                    options: {
+                        caseSensitive: true,
+                        matchCase: false,
+                        isolatedWord: false,
+                        bypass: '`'
                     },
-                    {
-                        search: 'shitty',
-                        replace: 'gross'
-                    }
-                ]
-            }))
-            .build(assertDirsEqual(src, done));
+                    subs: [
+                        {
+                            search: 'Spot',
+                            replace: 'Rex'
+                        }
+                    ]
+                }))
+                .build(assertDirsEqual(src, done));
+        });
+
+        it('should accept an object of match options to override defaults and globals', function (done) {
+            var src = 'test/fixtures/options-match';
+
+            Metalsmith(src)
+                .use(grep({
+                    options: {
+                        caseSensitive: true,
+                        matchCase: false,
+                        isolatedWord: false
+                    },
+                    subs: [
+                        {
+                            search: 'Spot',
+                            replace: 'Rex',
+                            options: {
+                                caseSensitive: false,
+                                matchCase: true,
+                                isolatedWord: true
+                            }
+                        }
+                    ]
+                }))
+                .build(assertDirsEqual(src, done));
+        });
     });
 
     describe('should preserve case', function (done) {
@@ -219,48 +349,24 @@ describe('metalsmith-grep', function () {
                 .use(_grep)
                 .build(assertFilesEqual(src, 'word_within_word.txt', done));
         });
-    });
 
-    describe('should allow regexp', function () {
-        it('should allow regexp targets', function (done) {
-            var src = 'test/fixtures/regexp-patterns';
+        it('should not substitute if they are enclosed in vertical pipes', function (done) {
+            var src = 'test/fixtures/bypass';
 
             Metalsmith(src)
-                .ignore('!moo.txt')
                 .use(grep({
                     subs: [
                         {
-                            search: 'cow',
-                            replace: 'cat'
+                            search: 'shit',
+                            replace: 'poop'
                         },
                         {
-                            search: 'moo+',
-                            replace: 'meow'
+                            search: 'shitty',
+                            replace: 'gross'
                         }
                     ]
                 }))
-                .build(assertFilesEqual(src, 'moo.txt', done));
-        });
-
-        it('should allow backreferences in sub["replace"]', function (done) {
-            var src = 'test/fixtures/regexp-patterns';
-
-            Metalsmith(src)
-                .clean(false)
-                .ignore('!boo.txt')
-                .use(grep({
-                    subs: [
-                        {
-                            search: 'ghost',
-                            replace: 'owl'
-                        },
-                        {
-                            search: 'bo(o+)',
-                            replace: 'ho$2'
-                        }
-                    ]
-                }))
-                .build(assertFilesEqual(src, 'boo.txt', done));
+                .build(assertDirsEqual(src, done));
         });
     });
 });
