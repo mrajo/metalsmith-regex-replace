@@ -5,7 +5,7 @@
  This is not a port or implementation of grep.
 **/
 
-var merge = require('lodash.merge');
+var extend = require('extend');
 var is = require('is');
 var rot = require('rot');
 
@@ -30,7 +30,7 @@ var grep = function (text, config) {
 
     function initOptions(options, base) {
         if ('undefined' == typeof base) base = defaults;
-        var options = merge(base, options);
+        var options = extend(base, options);
         var flags = 'g';
 
         if (!options['caseSensitive']) flags += 'i';
