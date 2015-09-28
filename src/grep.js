@@ -9,17 +9,6 @@ var extend = require('extend');
 var is = require('is');
 var rot = require('rot');
 
-/** NOTES
-    To allow for search terms to bypass substitution, bracket it with vertical pipes (|word|)
-
-    This makes the regexp replacements more complicated, because trying to regexp
-    for "\b[^|](target)[^|]\b" causes it to ruin the word boundary checks.
-
-    To perform the substitution:
-        1. convert |target| into |rot13(target)| to make it pass through actual substitution
-        2. substitute /\b(target)\b/
-        3. convert |rot13(target)| to target
-**/
 var grep = function (text, config) {
     var defaults = {
         caseSensitive: false,
@@ -51,14 +40,8 @@ var grep = function (text, config) {
     var _options = initOptions(config['options']);
     var g_options = _options.options;
     var g_flags = _options.flags;
-
-    // preserve bypassed words
-    if ('string' == typeof g_options['bypass']) {
-        // regex for words enclosed in vertical pipes
-        var re_bypass = new RegExp('[' + g_options['bypass'] + '](.+?)[' + g_options['bypass'] + ']', g_flags);
-
-        text = text.replace(re_bypass, function (match, p1) { return g_options['bypass'] + rot(p1) + g_options['bypass']; });
-    }
+    var bypass = '[' + g_options['bypass'] + ']';
+    var bypass_ignore = bypass + '[^' + g_options['bypass'] + ']+' + bypass;
 
     // substitute
     subs.forEach(function (sub, index) {
@@ -71,35 +54,62 @@ var grep = function (text, config) {
             var m_flags = _options.flags;
 
             if (m_options['isolatedWord']) {
-                var regexp = new RegExp('\\b(' + sub['search'] + ')\\b', m_flags);
+                //var regexp = new RegExp('\\b(' + sub['search'] + ')\\b', m_flags);
+                var regexp = new RegExp(bypass_ignore + '|\\b(' + sub['search'] + ')\\b', m_flags);
             } else {
-                var regexp = new RegExp('(' + sub['search'] + ')', m_flags);
+                //var regexp = new RegExp('(' + sub['search'] + ')', m_flags);
+                var regexp = new RegExp(bypass_ignore + '|(' + sub['search'] + ')', m_flags);
             }
 
-            // check if replace contains backreferences
+            // check if replace doesn't contain backreferences, then match original case if possible
             if (/\$/.test(sub['replace']) || !m_options['matchCase']) {
-                text = text.replace(regexp, sub['replace']);
+                //text = text.replace(regexp, sub['replace']);
+                text = text.replace(regexp, function (args) {
+                    var args = Array.prototype.slice.call(arguments);
+
+                    // if more than 4 args, then there are more than 1 backreferences
+                    // search and replace for JS backreferences (i.e. $2, $3, etc.) and
+                    // replace them with argument values for submatches
+                    if (args.length > 4) {
+                        var replacement_text = sub['replace'];
+                        for (var i = 2; i < args.length - 1; i++) {
+                            replacement_text = replacement_text.replace('$' + i, args[i]);
+                        }
+                        return replacement_text;
+                    }
+                    // a regular replacement
+                    if (args[1]) {
+                        return sub['replace'];
+                    }
+                    // bypassed
+                    else {
+                        return args[0];
+                    }
+                });
             } else {
                 text = text.replace(regexp, function (match, p1) {
-                    // all caps if original was all caps
-                    if (p1 === p1.toUpperCase()) {
-                        return sub['replace'].toUpperCase();
-                    }
-                    // capitalize if original was capitalized
-                    else if (p1[0] === p1[0].toUpperCase()) {
-                        return sub['replace'].charAt(0).toUpperCase() + sub['replace'].slice(1);
-                    }
+                    if (p1) {
+                        // all caps if original was all caps
+                        if (p1 === p1.toUpperCase()) {
+                            return sub['replace'].toUpperCase();
+                        }
+                        // capitalize if original was capitalized
+                        else if (p1[0] === p1[0].toUpperCase()) {
+                            return sub['replace'].charAt(0).toUpperCase() + sub['replace'].slice(1);
+                        }
 
-                    return sub['replace'].toLowerCase();
+                        return sub['replace'].toLowerCase();
+                    } else {
+                        return match;
+                    }
                 });
             }
         }
     });
 
-    // restore bypassed words
-    if ('string' == typeof g_options['bypass']) {
-        text = text.replace(re_bypass, function (match, p1) { return rot(p1); });
-    }
+    // remove bypass brackets
+    var re_brackets = new RegExp(bypass + '(.+)' + bypass, 'ig');
+    text = text.replace(re_brackets, '$1');
 
     return text;
 };

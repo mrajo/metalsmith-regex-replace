@@ -179,6 +179,10 @@ describe('metalsmith-grep', function () {
                         {
                             search: 'bo(o+)',
                             replace: 'ho$2'
+                        },
+                        {
+                            search: '2Pac-(.+?)-([0-9]{4})',
+                            replace: '2Pac - $2 ($3)'
                         }
                     ]
                 }))
