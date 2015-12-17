@@ -367,6 +367,14 @@ describe('metalsmith-grep', function () {
                         {
                             search: 'shitty',
                             replace: 'gross'
+                        },
+                        {
+                            search: 'badger',
+                            replace: 'snake'
+                        },
+                        {
+                            search: 'marty',
+                            replace: 'moomoo'
                         }
                     ]
                 }))

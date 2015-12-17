@@ -40,8 +40,6 @@ var grep = function (text, config) {
     var _options = initOptions(config['options']);
     var g_options = _options.options;
     var g_flags = _options.flags;
-    var bypass = '[' + g_options['bypass'] + ']';
-    var bypass_ignore = bypass + '[^' + g_options['bypass'] + ']+' + bypass;
 
     // substitute
     subs.forEach(function (sub, index) {
@@ -54,11 +52,9 @@ var grep = function (text, config) {
             var m_flags = _options.flags;
 
             if (m_options['isolatedWord']) {
-                //var regexp = new RegExp('\\b(' + sub['search'] + ')\\b', m_flags);
-                var regexp = new RegExp(bypass_ignore + '|\\b(' + sub['search'] + ')\\b', m_flags);
+                var regexp = new RegExp('\\b(?!\\' + g_options['bypass'] + ')(' + sub['search'] + ')(?!\\' + g_options['bypass'] + ')\\b', m_flags);
             } else {
-                //var regexp = new RegExp('(' + sub['search'] + ')', m_flags);
-                var regexp = new RegExp(bypass_ignore + '|(' + sub['search'] + ')', m_flags);
+                var regexp = new RegExp('(?!\\' + g_options['bypass'] + ')(' + sub['search'] + ')(?!\\' + g_options['bypass'] + ')', m_flags);
             }
 
             // check if replace doesn't contain backreferences, then match original case if possible
@@ -108,8 +104,8 @@ var grep = function (text, config) {
     });
 
     // remove bypass brackets
-    var re_brackets = new RegExp(bypass + '(.+)' + bypass, 'ig');
-    text = text.replace(re_brackets, '$1');
+    var re_bypass = new RegExp('\\' + g_options['bypass'] + '(.+?)' + '\\' + g_options['bypass'], 'ig');
+    text = text.replace(re_bypass, '$1');
 
     return text;
 };
