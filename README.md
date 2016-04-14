@@ -1,4 +1,4 @@
-# metalsmith-grep [![Build Status](https://travis-ci.org/mrajo/metalsmith-grep.svg)](https://travis-ci.org/mrajo/metalsmith-grep)
+# metalsmith-regex-replace [![Build Status](https://travis-ci.org/mrajo/metalsmith-regex-replace.svg)](https://travis-ci.org/mrajo/metalsmith-regex-replace)
 
 > A Metalsmith plugin for performing text search and replace in source files
 
@@ -9,7 +9,7 @@ censor NSFW text, hide sensitive information, etc.
 ## Install
 
 ```
-npm install metalsmith-grep
+npm install github:mrajo/metalsmith-regex-replace
 ```
 
 ## Usage
@@ -54,10 +54,10 @@ function that returns an object.
 
 ```javascript
 var Metalsmith = require('metalsmith');
-var grep = require('metalsmith-grep');
+var replace = require('metalsmith-regex-replace');
 
 Metalsmith(__dirname)
-    .use(grep({
+    .use(replace({
         subs: [
             {
                 search: 'teh',
@@ -92,16 +92,16 @@ JSON file must end with extension `.json`.
 Javascript
 ```javascript
 var Metalsmith = require('metalsmith');
-var grep = require('metalsmith-grep');
+var replace = require('metalsmith-regex-replace');
 
 // YAML
 Metalsmith(__dirname)
-    .use(grep('path/to/subs.yaml'))
+    .use(replace('path/to/subs.yaml'))
     .build();
 
 // JSON
 Metalsmith(__dirname)
-    .use(grep('path/to/subs.json'))
+    .use(replace('path/to/subs.json'))
     .build();
 ```
 
@@ -109,7 +109,7 @@ Metalsmith(__dirname)
 
 ```javascript
 var Metalsmith = require('metalsmith');
-var grep = require('metalsmith-grep');
+var replace = require('metalsmith-regex-replace');
 
 function makeSubs() {
   // do stuff
@@ -124,7 +124,7 @@ function makeSubs() {
 }
 
 Metalsmith(__dirname)
-    .use(grep(makeSubs))
+    .use(replace(makeSubs))
     .build();
 ```
 
@@ -192,9 +192,9 @@ When text in source is enclosed between the `bypass` string, it will be ignored
 by the substitution filter. This can be changed if necessary, or set to `null`
 or `false` to disable this behavior. This must be a one-character string. This
 option is always global and can't be overridden per-match, since it wouldn't
-make sense. For more information on bypassing, read on to "Bypassing grep".
+make sense. For more information on bypassing, read on to "Bypassing regex-replace".
 
-## Bypassing grep
+## Bypassing regex-replace
 To allow a word to bypass replacement (such as homonyms or other instances of
 words changing meaning with context), surround it with vertical pipes in your
 source, like `|word|`. This wrapper character can be overridden using the
@@ -208,7 +208,7 @@ There once was a man named Bob who liked to bob for apples.
 #### Javascript
 ```
 Metalsmith(__dirname)
-    .use(grep({
+    .use(replace({
         subs: [
             {
                 search: 'bob',
