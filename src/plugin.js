@@ -1,22 +1,22 @@
-'use strict';
+'use strict'
 
-var config = require('./config.js');
-var replace = require('./replace.js');
-var each = require('async').each;
+const config = require('./config.js')
+const replace = require('./replace.js')
+const each = require('async').each
 
-function plugin(params) {
-  var cfg = config(params);
+const plugin = (params) => {
+  const cfg = config(params)
 
-  return function (files, metalsmith, done) {
-  each(
-    Object.keys(files),
-    function (file, done) {
-    files[file].contents = new Buffer(replace(files[file].contents.toString(), cfg));
-    done();
-    },
-    done
-  );
-  };
+  return (files, metalsmith, done) => {
+    each(
+      Object.keys(files),
+      (file, done) => {
+        files[file].contents = new Buffer(replace(files[file].contents.toString(), cfg))
+        done()
+      },
+      done
+    )
+  }
 }
 
-module.exports = plugin;
+module.exports = plugin

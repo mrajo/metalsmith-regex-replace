@@ -1,24 +1,24 @@
-'use strict';
+'use strict'
 
-var yaml = require('js-yaml');
-var fs = require('fs');
+const yaml = require('js-yaml')
+const fs = require('fs')
 
-var loader = module.exports = {};
+let loader = module.exports = {}
 
-loader.yaml = function (filepath) {
+loader.yaml = (filepath) => {
   try {
-    return yaml.safeLoad(fs.readFileSync(filepath, 'utf8'));
+    return yaml.safeLoad(fs.readFileSync(filepath, 'utf8'))
   } catch (e) {
-    console.error(e);
+    console.error(e)
   }
-  return false;
-};
+  return false
+}
 
-loader.json = function (filepath) {
+loader.json = (filepath) => {
   try {
-    return JSON.parse(fs.readFileSync(filepath, 'utf8'));
+    return JSON.parse(fs.readFileSync(filepath, 'utf8'))
   } catch (e) {
-    console.error(e);
+    console.error(e)
   }
-  return false;
-};
+  return false
+}

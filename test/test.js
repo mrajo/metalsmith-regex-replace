@@ -1,52 +1,52 @@
-'use strict';
+'use strict'
 
-var assert = require('assert');
-var dir_equal = require('assert-dir-equal');
-var Metalsmith = require('metalsmith');
-var replace = require('../');
-var join = require('path').join;
-var read = require('fs').readFileSync;
-var buffer_equal = require('buffer-equal');
-var utf8 = require('is-utf8');
+const assert = require('assert')
+const dir_equal = require('assert-dir-equal')
+const Metalsmith = require('metalsmith')
+const replace = require('../')
+const join = require('path').join
+const read = require('fs').readFileSync
+const buffer_equal = require('buffer-equal')
+const utf8 = require('is-utf8')
 
-function assertDirsEqual(src, done) {
-  return function (err) {
-    if (err) return done(err);
-    dir_equal(join(src, 'expected'), join(src, 'build'));
-    done();
-  };
+const assertDirsEqual = (src, done) => {
+  return (err) => {
+    if (err) return done(err)
+    dir_equal(join(src, 'expected'), join(src, 'build'))
+    done()
+  }
 }
 
-function assertFilesEqual(src, file, done) {
-  return function (err) {
-    var file_a = read(join(src, 'expected', file));
-    var file_b = read(join(src, 'build', file));
+const assertFilesEqual = (src, file, done) => {
+  return (err) => {
+    const file_a = read(join(src, 'expected', file))
+    const file_b = read(join(src, 'build', file))
 
     if (utf8(file_a) && utf8(file_b)) {
-      assert.equal(file_a.toString(), file_b.toString());
+      assert.equal(file_a.toString(), file_b.toString())
     } else {
-      assert(buffer_equal(file_a, file_b));
+      assert(buffer_equal(file_a, file_b))
     }
 
-    done();
-  };
+    done()
+  }
 }
 
-describe('metalsmith-regex-replace', function () {
-  it('should error if given no subs', function (done) {
-    function runMetalsmith() {
+describe('metalsmith-regex-replace', () => {
+  it('should error if given no subs', (done) => {
+    const runMetalsmith = () => {
       Metalsmith('test/fixtures/no-subs')
         .use(replace())
-        .build();
+        .build()
     }
 
-    assert.throws(runMetalsmith, /Invalid arguments/);
-    done();
-  });
+    assert.throws(runMetalsmith, /Invalid arguments/)
+    done()
+  })
 
-  describe('should accept various argument types', function () {
-    it('should accept an object of subs', function (done) {
-      var src = 'test/fixtures/subs-object';
+  describe('should accept various argument types', () => {
+    it('should accept an object of subs', (done) => {
+      const src = 'test/fixtures/subs-object'
 
       Metalsmith(src)
         .use(replace({
@@ -61,14 +61,14 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertDirsEqual(src, done));
-    });
+        .build(assertDirsEqual(src, done))
+    })
 
-    it('should accept a function that returns an object of subs', function (done) {
-      var src = 'test/fixtures/subs-function';
+    it('should accept a function that returns an object of subs', (done) => {
+      const src = 'test/fixtures/subs-function'
 
       Metalsmith(src)
-        .use(replace(function () {
+        .use(replace(() => {
           return {
             subs: [
               {
@@ -80,31 +80,31 @@ describe('metalsmith-regex-replace', function () {
                 replace: 'brethren'
               }
             ]
-          };
+          }
         }))
-        .build(assertDirsEqual(src, done));
-    });
+        .build(assertDirsEqual(src, done))
+    })
 
-    it('should accept a string containing the path to a JSON file of subs', function (done) {
-      var src = 'test/fixtures/subs-file-json';
+    it('should accept a string containing the path to a JSON file of subs', (done) => {
+      const src = 'test/fixtures/subs-file-json'
 
       Metalsmith(src)
         .use(replace(src + '/subs.json'))
-        .build(assertDirsEqual(src, done));
-    });
+        .build(assertDirsEqual(src, done))
+    })
 
-    it('should accept a string containing the path to a YAML file of subs', function (done) {
-      var src = 'test/fixtures/subs-file-yaml';
+    it('should accept a string containing the path to a YAML file of subs', (done) => {
+      const src = 'test/fixtures/subs-file-yaml'
 
       Metalsmith(src)
         .use(replace(src + '/subs.yml'))
-        .build(assertDirsEqual(src, done));
-    });
-  });
+        .build(assertDirsEqual(src, done))
+    })
+  })
 
-  describe('should accept various search and replace formats', function () {
-    it('should accept search pattern as string', function (done) {
-      var src = 'test/fixtures/search-string';
+  describe('should accept various search and replace formats', () => {
+    it('should accept search pattern as string', (done) => {
+      const src = 'test/fixtures/search-string'
 
       Metalsmith(src)
         .use(replace({
@@ -115,11 +115,11 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertDirsEqual(src, done));
-    });
+        .build(assertDirsEqual(src, done))
+    })
 
-    it('should accept search pattern as RegExp literal', function (done) {
-      var src = 'test/fixtures/search-regexp-literal';
+    it('should accept search pattern as RegExp literal', (done) => {
+      const src = 'test/fixtures/search-regexp-literal'
 
       Metalsmith(src)
         .use(replace({
@@ -130,11 +130,11 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertDirsEqual(src, done));
-    });
+        .build(assertDirsEqual(src, done))
+    })
 
-    it('should accept search pattern as RegExp object instance', function (done) {
-      var src = 'test/fixtures/search-regexp';
+    it('should accept search pattern as RegExp object instance', (done) => {
+      const src = 'test/fixtures/search-regexp'
 
       Metalsmith(src)
         .use(replace({
@@ -145,28 +145,28 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertDirsEqual(src, done));
-    });
+        .build(assertDirsEqual(src, done))
+    })
 
-    it('should accept a function as a replacement', function (done) {
-      var src = 'test/fixtures/replace-function';
+    it('should accept a function as a replacement', (done) => {
+      const src = 'test/fixtures/replace-function'
 
       Metalsmith(src)
         .use(replace({
           subs: [
             {
               search: /([a-z])([A-Z])/g,
-              replace: function (match, p1, p2) {
-                return p1 + '_' + p2.toLowerCase();
+              replace: (match, p1, p2) => {
+                return p1 + '_' + p2.toLowerCase()
               }
             }
           ]
         }))
-        .build(assertDirsEqual(src, done));
-    });
+        .build(assertDirsEqual(src, done))
+    })
 
-    it('should allow backreferences in sub["replace"]', function (done) {
-      var src = 'test/fixtures/replace-backref';
+    it('should allow backreferences in sub["replace"]', (done) => {
+      const src = 'test/fixtures/replace-backref'
 
       Metalsmith(src)
         .clean(false)
@@ -186,13 +186,13 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertFilesEqual(src, 'boo.txt', done));
-    });
-  });
+        .build(assertFilesEqual(src, 'boo.txt', done))
+    })
+  })
 
-  describe('should accept options', function () {
-    it('should have default options', function (done) {
-      var src = 'test/fixtures/options-default';
+  describe('should accept options', () => {
+    it('should have default options', (done) => {
+      const src = 'test/fixtures/options-default'
 
       Metalsmith(src)
         .use(replace({
@@ -203,11 +203,11 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertDirsEqual(src, done));
-    });
+        .build(assertDirsEqual(src, done))
+    })
 
-    it('should accept an object of global options to override defaults', function (done) {
-      var src = 'test/fixtures/options-global';
+    it('should accept an object of global options to override defaults', (done) => {
+      const src = 'test/fixtures/options-global'
 
       Metalsmith(src)
         .use(replace({
@@ -224,11 +224,11 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertDirsEqual(src, done));
-    });
+        .build(assertDirsEqual(src, done))
+    })
 
-    it('should accept an object of match options to override defaults and globals', function (done) {
-      var src = 'test/fixtures/options-match';
+    it('should accept an object of match options to override defaults and globals', (done) => {
+      const src = 'test/fixtures/options-match'
 
       Metalsmith(src)
         .use(replace({
@@ -249,13 +249,13 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertDirsEqual(src, done));
-    });
-  });
+        .build(assertDirsEqual(src, done))
+    })
+  })
 
-  describe('should preserve case', function (done) {
-    it('should replace all caps target with all caps substitute', function (done) {
-      var src = 'test/fixtures/preserve-case';
+  describe('should preserve case', (done) => {
+    it('should replace all caps target with all caps substitute', (done) => {
+      const src = 'test/fixtures/preserve-case'
 
       Metalsmith(src)
         .ignore('!allcaps.txt')
@@ -267,11 +267,11 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertFilesEqual(src, 'allcaps.txt', done));
-    });
+        .build(assertFilesEqual(src, 'allcaps.txt', done))
+    })
 
-    it('should replace capitalized target with capitalized substitute', function (done) {
-      var src = 'test/fixtures/preserve-case';
+    it('should replace capitalized target with capitalized substitute', (done) => {
+      const src = 'test/fixtures/preserve-case'
 
       Metalsmith(src)
         .clean(false)
@@ -284,78 +284,78 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertFilesEqual(src, 'capitalized.txt', done));
-    });
-  });
+        .build(assertFilesEqual(src, 'capitalized.txt', done))
+    })
+  })
 
-  describe('should work with various word boundaries', function () {
-    var _replace = replace({
+  describe('should work with various word boundaries', () => {
+    const _replace = replace({
       subs: [
         {
           search: 'ninja',
           replace: 'blarg'
         }
       ]
-    });
+    })
 
-    it('should work at the beginning of the file', function (done) {
-      var src = 'test/fixtures/word-boundaries';
-
-      Metalsmith(src)
-        .use(_replace)
-        .build(assertFilesEqual(src, 'BOL.txt', done));
-    });
-
-    it('should work at the end of the file', function (done) {
-      var src = 'test/fixtures/word-boundaries';
+    it('should work at the beginning of the file', (done) => {
+      const src = 'test/fixtures/word-boundaries'
 
       Metalsmith(src)
         .use(_replace)
-        .build(assertFilesEqual(src, 'EOL.txt', done));
-    });
+        .build(assertFilesEqual(src, 'BOL.txt', done))
+    })
 
-    it('should work with brackets', function (done) {
-      var src = 'test/fixtures/word-boundaries';
-
-      Metalsmith(src)
-        .use(_replace)
-        .build(assertFilesEqual(src, 'brackets.txt', done));
-    });
-
-    it('should work in possessive forms', function (done) {
-      var src = 'test/fixtures/word-boundaries';
+    it('should work at the end of the file', (done) => {
+      const src = 'test/fixtures/word-boundaries'
 
       Metalsmith(src)
         .use(_replace)
-        .build(assertFilesEqual(src, 'possessive.txt', done));
-    });
+        .build(assertFilesEqual(src, 'EOL.txt', done))
+    })
 
-    it('should preserve the original word case', function (done) {
-      var src = 'test/fixtures/word-boundaries';
-
-      Metalsmith(src)
-        .use(_replace)
-        .build(assertFilesEqual(src, 'preserve_original_case.txt', done));
-    });
-
-    it('should work with punctuation', function (done) {
-      var src = 'test/fixtures/word-boundaries';
+    it('should work with brackets', (done) => {
+      const src = 'test/fixtures/word-boundaries'
 
       Metalsmith(src)
         .use(_replace)
-        .build(assertFilesEqual(src, 'punctuation.txt', done));
-    });
+        .build(assertFilesEqual(src, 'brackets.txt', done))
+    })
 
-    it('should ignore target within other words', function (done) {
-      var src = 'test/fixtures/word-boundaries';
+    it('should work in possessive forms', (done) => {
+      const src = 'test/fixtures/word-boundaries'
 
       Metalsmith(src)
         .use(_replace)
-        .build(assertFilesEqual(src, 'word_within_word.txt', done));
-    });
+        .build(assertFilesEqual(src, 'possessive.txt', done))
+    })
 
-    it('should not substitute if they are enclosed in vertical pipes', function (done) {
-      var src = 'test/fixtures/bypass';
+    it('should preserve the original word case', (done) => {
+      const src = 'test/fixtures/word-boundaries'
+
+      Metalsmith(src)
+        .use(_replace)
+        .build(assertFilesEqual(src, 'preserve_original_case.txt', done))
+    })
+
+    it('should work with punctuation', (done) => {
+      const src = 'test/fixtures/word-boundaries'
+
+      Metalsmith(src)
+        .use(_replace)
+        .build(assertFilesEqual(src, 'punctuation.txt', done))
+    })
+
+    it('should ignore target within other words', (done) => {
+      const src = 'test/fixtures/word-boundaries'
+
+      Metalsmith(src)
+        .use(_replace)
+        .build(assertFilesEqual(src, 'word_within_word.txt', done))
+    })
+
+    it('should not substitute if they are enclosed in vertical pipes', (done) => {
+      const src = 'test/fixtures/bypass'
 
       Metalsmith(src)
         .use(replace({
@@ -378,7 +378,7 @@ describe('metalsmith-regex-replace', function () {
             }
           ]
         }))
-        .build(assertDirsEqual(src, done));
-    });
-  });
-});
+        .build(assertDirsEqual(src, done))
+    })
+  })
+})
