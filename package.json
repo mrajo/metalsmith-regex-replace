@@ -1,6 +1,6 @@
 {
   "name": "metalsmith-regex-replace",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "A Metalsmith plugin for performing text search and replace in source files",
   "main": "src/plugin.js",
   "repository": "mrajo/metalsmith-regex-replace",

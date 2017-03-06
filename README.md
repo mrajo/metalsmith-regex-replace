@@ -9,7 +9,7 @@ censor NSFW text, hide sensitive information, etc.
 ## Install
 
 ```
-npm install github:mrajo/metalsmith-regex-replace
+npm install metalsmith-regex-replace
 ```
 
 ## Usage
