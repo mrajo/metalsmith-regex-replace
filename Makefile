@@ -7,7 +7,6 @@ test: node_modules
 	@$(nodebin)nyc mocha -R spec
 
 coverage:
-	@$(nodebin)nyc mocha -R spec
 	@$(nodebin)nyc report --reporter=lcov
 
 .PHONY: test coverage
