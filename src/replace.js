@@ -31,6 +31,14 @@ const initOptions = (options, base) => {
   }
 }
 
+const createMatcherRegexp = (options, flags, search, bypass) => {
+  let re = '(?!\\' + bypass + ')(' + search + ')(?!\\' + bypass + ')'
+  if (options['isolatedWord']) {
+    re = '\\b' + re + '\\b'
+  }
+  return new RegExp(re, flags)
+}
+
 // replacer function that allows backreferences in the replacement text
 // also bypasses matches within bypass brackets
 const replaceBackRefFn = (replace) => {
@@ -46,11 +54,10 @@ const replaceBackRefFn = (replace) => {
     return text
   }
 
+  // matcher captures bypass so first 4 args are (match, p1, p2, p3)
+  //   where p1 and p3 are the bypass characters
   return (...args) => {
     args = Array.prototype.slice.call(args)
-
-    // matcher captures bypass so first 4 args are (match, p1, p2, p3)
-    //   where p1 and p3 are the bypass characters
 
     // if no backreferences, just check if p1 is empty or not to bypass
     if (args.length <= 4) return args[1] ? replace : args[0]
@@ -96,13 +103,7 @@ const replace = (text, config) => {
     } else {
       // per-match options and flags
       const { options: m_options, flags: m_flags } = initOptions(sub['options'], g_options)
-      let regexp;
-
-      if (m_options['isolatedWord']) {
-        regexp = new RegExp('\\b(?!\\' + g_options['bypass'] + ')(' + sub['search'] + ')(?!\\' + g_options['bypass'] + ')\\b', m_flags)
-      } else {
-        regexp = new RegExp('(?!\\' + g_options['bypass'] + ')(' + sub['search'] + ')(?!\\' + g_options['bypass'] + ')', m_flags)
-      }
+      const regexp = createMatcherRegexp(m_options, m_flags, sub['search'], g_options['bypass'])
 
       // check if replace doesn't contain backreferences, then match original case if possible
       if (/\$/.test(sub['replace']) || !m_options['matchCase']) {
