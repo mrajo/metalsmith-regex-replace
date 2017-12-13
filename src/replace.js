@@ -34,24 +34,28 @@ const initOptions = (options, base) => {
 // replacer function that allows backreferences in the replacement text
 // also bypasses matches within bypass brackets
 const replaceBackRefFn = (replace) => {
+  // internal function for replacing backreferences
+  // if more than 4 args, then there are more than 1 backreferences
+  // search and replace for JS backreferences (i.e. $2, $3, etc.) and
+  // replace them with argument values for submatches
+  const replaceBackRefs = (text, args) => {
+    for (let i = 2; i < args.length - 1; i++) {
+      text = text.replace('$' + i, args[i])
+    }
+
+    return text
+  }
+
   return (...args) => {
     args = Array.prototype.slice.call(args)
 
     // matcher captures bypass so first 4 args are (match, p1, p2, p3)
     //   where p1 and p3 are the bypass characters
-    // if more than 4 args, then there are more than 1 backreferences
-    // search and replace for JS backreferences (i.e. $2, $3, etc.) and
-    // replace them with argument values for submatches
-    if (args.length > 4) {
-      let replacement_text = replace
-      for (let i = 2; i < args.length - 1; i++) {
-        replacement_text = replacement_text.replace('$' + i, args[i])
-      }
-      return replacement_text
-    }
 
-    // if p1 is empty, then no bypass
-    return args[1] ? replace : args[0]
+    // if no backreferences, just check if p1 is empty or not to bypass
+    if (args.length <= 4) return args[1] ? replace : args[0]
+
+    return replaceBackRefs(replace, args)
   }
 }
 
@@ -61,18 +65,15 @@ const replaceBackRefFn = (replace) => {
 const replaceMatchCaseFn = (replace) => {
   return (match, p1) => {
     // all caps if original was all caps
-    if (p1 && p1 === p1.toUpperCase()) {
+    if (p1 === p1.toUpperCase()) {
       return replace.toUpperCase()
     }
       // capitalize if original was capitalized
-    if (p1 && p1[0] === p1[0].toUpperCase()) {
+    if (p1[0] === p1[0].toUpperCase()) {
       return replace.charAt(0).toUpperCase() + replace.slice(1)
     }
 
-    if (p1) {
-      return replace.toLowerCase()
-    }
-    return match
+    return replace.toLowerCase()
   }
 }
 
