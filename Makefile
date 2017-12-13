@@ -1,7 +1,13 @@
+nodebin = node_modules/.bin/
+
 node_modules: package.json
 	@npm install
 
 test: node_modules
-	@"./node_modules/.bin/mocha" -R spec
+	@$(nodebin)nyc mocha -R spec
 
-.PHONY: test
+coverage:
+	@$(nodebin)nyc mocha -R spec
+	@$(nodebin)nyc report --reporter=lcov
+
+.PHONY: test coverage

@@ -1,4 +1,4 @@
-# metalsmith-regex-replace [![Build Status](https://travis-ci.org/mrajo/metalsmith-regex-replace.svg)](https://travis-ci.org/mrajo/metalsmith-regex-replace)
+# metalsmith-regex-replace [![Build Status](https://travis-ci.org/mrajo/metalsmith-regex-replace.svg)](https://travis-ci.org/mrajo/metalsmith-regex-replace) [![Maintainability](https://api.codeclimate.com/v1/badges/7e35438522e177a80723/maintainability)](https://codeclimate.com/github/mrajo/metalsmith-regex-replace/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/7e35438522e177a80723/test_coverage)](https://codeclimate.com/github/mrajo/metalsmith-regex-replace/test_coverage)
 
 > A Metalsmith plugin for performing text search and replace in source files
 
