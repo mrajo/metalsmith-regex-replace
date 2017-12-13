@@ -1,6 +1,6 @@
 'use strict'
 
-const load = require('../src/loader.js')
+const load = require('../src/loader')
 
 const config = (params) => {
   let cfg = false;
@@ -10,8 +10,7 @@ const config = (params) => {
       cfg = params
       break
     case 'string':
-      if (/\.ya?ml$/.test(params)) cfg = load.yaml(params)
-      if (/\.json$/.test(params))  cfg = load.json(params)
+      cfg = load(params)
       break
     case 'function':
       cfg = params()

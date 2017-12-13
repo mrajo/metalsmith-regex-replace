@@ -1,7 +1,7 @@
 'use strict'
 
-const config = require('./config.js')
-const replace = require('./replace.js')
+const config = require('./config')
+const replace = require('./replace')
 const each = require('async').each
 
 const plugin = (params) => {

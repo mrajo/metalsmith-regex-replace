@@ -3,9 +3,7 @@
 const yaml = require('js-yaml')
 const fs = require('fs')
 
-let loader = module.exports = {}
-
-loader.yaml = (filepath) => {
+const loadYaml = (filepath) => {
   try {
     return yaml.safeLoad(fs.readFileSync(filepath, 'utf8'))
   } catch (e) {
@@ -14,7 +12,7 @@ loader.yaml = (filepath) => {
   return false
 }
 
-loader.json = (filepath) => {
+const loadJson = (filepath) => {
   try {
     return JSON.parse(fs.readFileSync(filepath, 'utf8'))
   } catch (e) {
@@ -22,3 +20,11 @@ loader.json = (filepath) => {
   }
   return false
 }
+
+const loadConfig = (filepath) => {
+  if (/\.ya?ml$/.test(filepath)) return loadYaml(filepath)
+  if (/\.json$/.test(filepath))  return loadJson(filepath)
+  return false
+}
+
+module.exports = loadConfig
