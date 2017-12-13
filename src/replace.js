@@ -49,14 +49,9 @@ const replaceBackRefFn = (replace) => {
       }
       return replacement_text
     }
-    // a regular replacement
-    if (args[1]) {
-      return replace
-    }
-    // bypassed
-    else {
-      return args[0]
-    }
+
+    // if p1 is empty, then no bypass
+    return args[1] ? replace : args[0]
   }
 }
 
@@ -65,20 +60,19 @@ const replaceBackRefFn = (replace) => {
 // replaces text while trying to match the original case of the matched text
 const replaceMatchCaseFn = (replace) => {
   return (match, p1) => {
-    if (p1) {
-      // all caps if original was all caps
-      if (p1 === p1.toUpperCase()) {
-        return replace.toUpperCase()
-      }
-      // capitalize if original was capitalized
-      else if (p1[0] === p1[0].toUpperCase()) {
-        return replace.charAt(0).toUpperCase() + replace.slice(1)
-      }
-
-      return replace.toLowerCase()
-    } else {
-      return match
+    // all caps if original was all caps
+    if (p1 && p1 === p1.toUpperCase()) {
+      return replace.toUpperCase()
     }
+      // capitalize if original was capitalized
+    if (p1 && p1[0] === p1[0].toUpperCase()) {
+      return replace.charAt(0).toUpperCase() + replace.slice(1)
+    }
+
+    if (p1) {
+      return replace.toLowerCase()
+    }
+    return match
   }
 }
 
