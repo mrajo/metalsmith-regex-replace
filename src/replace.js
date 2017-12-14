@@ -3,7 +3,6 @@
 // Internal object for performing search and replace.
 
 const is = require('is')
-if (!Object.assign) Object.assign = require('object-assign')
 
 // default options
 const defaults = {
@@ -22,7 +21,7 @@ const initOptions = (options, base) => {
   if (!options['caseSensitive']) flags += 'i'
 
   if (options['bypass'].length > 1) {
-    throw new Error('bypass option needs to be a one-character string')
+    throw new Error('Bypass option needs to be a one-character string')
   }
 
   return {
@@ -59,8 +58,8 @@ const replaceBackRefFn = (replace) => {
   return (...args) => {
     args = Array.prototype.slice.call(args)
 
-    // if no backreferences, just check if p1 is empty or not to bypass
-    if (args.length <= 4) return args[1] ? replace : args[0]
+    // if no backreferences
+    if (args.length <= 4) return replace
 
     return replaceBackRefs(replace, args)
   }

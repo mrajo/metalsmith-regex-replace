@@ -100,6 +100,32 @@ describe('metalsmith-regex-replace', () => {
         .use(replace(src + '/subs.yml'))
         .build(assertDirsEqual(src, done))
     })
+
+    it('should error if config path can\'t be read', (done) => {
+      const src = 'test/fixtures/subs-file-json'
+
+      const runMetalsmith = () => {
+        Metalsmith(src)
+        .use(replace(src + '/sobs.json'))
+        .build()
+      }
+
+      assert.throws(runMetalsmith, /Invalid config/)
+      done()
+    })
+
+    it('should error if config path exists but is not JSON or YAML', (done) => {
+      const src = 'test/fixtures/subs-file-whatever'
+
+      const runMetalsmith = () => {
+        Metalsmith(src)
+        .use(replace(src + '/subs.txt'))
+        .build()
+      }
+
+      assert.throws(runMetalsmith, /Invalid config/)
+      done()
+    })
   })
 
   describe('should accept various search and replace formats', () => {
@@ -250,6 +276,26 @@ describe('metalsmith-regex-replace', () => {
           ]
         }))
         .build(assertDirsEqual(src, done))
+    })
+
+    it('should error if given an invalid bypass character', (done) => {
+      Metalsmith('test/fixtures/options-default')
+        .use(replace({
+          options: {
+            bypass: '##'
+          },
+          subs: [
+            {
+              search: 'Spot',
+              replace: 'Rex'
+            }
+          ]
+        }))
+        .build((err) => {
+          assert.ok(err, 'Should have thrown an error')
+          assert.equal(err.message, 'Bypass option needs to be a one-character string', 'Bypass error message mismatch')
+          done()
+        })
     })
   })
 

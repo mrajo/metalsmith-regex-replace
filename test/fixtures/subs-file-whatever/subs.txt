@@ -1,0 +1,12 @@
+{
+    "subs": [
+        {
+            "search": "teh",
+            "replace": "the"
+        },
+        {
+            "search": "yuo",
+            "replace": "you"
+        }
+    ]
+}
