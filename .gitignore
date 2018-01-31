@@ -2,3 +2,5 @@ node_modules
 test/fixtures/**/build
 .nyc_output
 coverage*
+.test_result
+cc-test-reporter
